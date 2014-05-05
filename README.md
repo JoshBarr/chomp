@@ -1,4 +1,0 @@
-chomp
-=====
-
-Preview static images.
