@@ -1,0 +1,30 @@
+{% macro date_modified(timestamp) %}
+	{{ timestamp|date("D d M, Y", "Pacific/Auckland") }}
+{% endmacro %}
+
+
+{% macro textField(field) %}
+	{% if field.vars.errors %}
+			{% set classes = "field field-text field--error" %}
+	{% else %}
+		{% set classes = "field field-text" %}
+	{% endif %}
+	{{ form_widget(field, { 'attr': {'class': classes} }) }}
+
+	<div class="field__errors">
+		{{ form_errors(field) }}
+	</div>
+{% endmacro %}
+
+{% macro bigTransparentField(field) %}
+	{% if field.vars.errors %}
+			{% set classes = "field field--invisible field--write-in h1 field--error" %}
+	{% else %}
+		{% set classes = "field field--invisible field--write-in h1" %}
+	{% endif %}
+	{{ form_widget(field, { 'attr': {'class': classes} }) }}
+
+	<div class="field__errors">
+		{{ form_errors(field) }}
+	</div>
+{% endmacro %}

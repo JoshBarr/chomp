@@ -1,0 +1,85 @@
+{% extends "template.twig" %}
+
+{% block content %}
+	
+	{% if action == "users" %}
+
+		{% if subaction == "view" %}
+			<h2>Users</h2>
+
+			<a href="/admin/users/new">Add user</a>
+
+			{% for user in users %}
+				{% if loop.first %}<ul class='stripe'>{% endif %}
+				<li>
+					<h3>{{user.username}}</h3>
+
+					<a href='/admin/users/edit/{{user.id}}'>Edit</a>
+
+					{% if user.roles == "ROLE_USER" %}
+					<a href='/admin/users/delete/{{user.id}}'>Delete</a>
+					{% endif %}
+
+					<br>
+					<span><strong>Access:</strong> {{ user.roles }}</span><br>
+					<span><strong>Paths:</strong>	{{user.paths}}</span>
+				</li>
+				{% if loop.last %}</ul>{% endif %}
+			{% endfor %}
+		{% endif %}
+
+		{% if subaction == "new" %}
+			<h2>Add a user</h2>
+			<form action="" method="post">
+				<p>
+					Username:
+					<input type="text" name="username" placeholder="eg, springload">
+				</p>
+				<p>
+					Password:
+					<input type="text" name="password" placeholder="">
+				</p>
+				<p>
+					Password again:
+					<input type="text" name="password-again" placeholder="">
+				</p>
+				<hr>
+				<p>
+					Permitted paths (regex):
+					<input type="text" name="paths" value="" placeholder="eg. ^/kiwibank">
+				</p>
+				<hr>
+				<p>
+					<input type="submit"> 
+				</p>
+			</form>
+		{% endif %}
+
+		{% if subaction == "edit" %}
+			<h2>Edit {{user.username}}</h2>
+			<form action="" method="post">
+				<p>
+					Username:
+					<input type="text" name="username" value="{{user.username}}" placeholder="eg, springload">
+				</p>
+				<p>
+					Password:
+					<input type="text" name="password" placeholder="eg. password">
+				</p>
+				<p>
+					Password again:
+					<input type="text" name="password-again" placeholder="">
+				</p>
+				<p>
+					Permitted paths (regex):
+					<input type="text" name="paths" value="{{user.paths}}" placeholder="eg. ^/kiwibank">
+				</p>
+				<p>
+					<input type="submit"> 
+				</p>
+			</form>
+		{% endif %}
+
+	{% endif %}
+
+{% endblock	%}

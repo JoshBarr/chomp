@@ -1,0 +1,58 @@
+{
+    "name": "Test case",
+    "logo": "/assets/images/springload.png",
+    "url": "http://springload.co.nz/",
+    "projects": [
+        {
+            "name": "job000-calculator",
+            "mtime": 1399260242,
+            "ctime": 1399260242,
+            "path": "/server/chomp/www/clients/client/job000-calculator",
+            "data": {
+                "name": "Project name",
+                "job_code": "SL000",
+                "preview_url": "http://some-client.co.nz",
+                "basecamp_url": "http://basecamp.com/XXX",
+                "description": "This is the project description",
+                "groups": [
+                    {
+                        "id": "0",
+                        "date": "",
+                        "title": "",
+                        "order": "0",
+                        "anchor": ""
+                    },
+                    {
+                        "id": "1",
+                        "date": "",
+                        "title": "Test group",
+                        "order": "1",
+                        "anchor": ""
+                    }
+                ]
+            }
+        },
+        {
+            "name": "job001-homepage",
+            "mtime": 1399261817,
+            "ctime": 1399261817,
+            "path": "/server/chomp/www/clients/client/job001-homepage",
+            "data": {
+                "name": "Project name",
+                "job_code": "SL000",
+                "preview_url": "http://some-client.co.nz",
+                "basecamp_url": "http://basecamp.com/XXX",
+                "description": "This is the project description",
+                "groups": [
+                    {
+                        "id": "0",
+                        "date": "",
+                        "title": "",
+                        "order": "0",
+                        "anchor": ""
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,51 @@
+{% extends "template.twig" %}
+
+{% block content_outer %}
+
+<div class="project__meta content">
+	<h1>{{client.name}}</h1>
+	<p>
+		{{client.url}}
+	</p>
+
+	<img src="{{client.logo}}">
+
+
+	{% if is_granted('ROLE_ADMIN') %}
+	<p>
+		<a href="/edit/{{ name }}" class='btn btn-primary'>Edit this client</a>
+	</p>
+	{% endif %}
+</div>
+<div class="content">
+	{% if client.projects|length == 0 %} 
+	<p>
+		No projects
+	</p>
+	{% endif %}
+	{% for project in client.projects %}
+		{% if loop.first %}<ul class='list'>{% endif %}
+		<h2>
+			{%- if project.data -%}
+			<span class="lightweight">{{ project.data.job_code|default("") }} </span>	
+			{%- endif -%}
+			<a href="{{project.name}}">
+			{%- if project.data -%}
+			{{project.data.name}}
+			{%- else -%}
+			{{project.name}}
+			{%- endif -%}
+			</a>
+		</h2>
+		<p>
+			<br>
+			{{ macros.date_modified(project.mtime) }}
+		</p>
+		
+		{% if loop.last %}</ul>{% endif %}
+
+	{% endfor %}
+</div>
+
+
+{% endblock %}

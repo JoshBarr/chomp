@@ -1,0 +1,65 @@
+{% extends "template.twig" %}
+
+
+{% block content_outer %}
+{{ form_start(form) }}
+<div class="project__meta content" data-edit-project>
+
+	{{ form_errors(form) }}
+
+	<div class="form__errors">	
+		{{ form_errors(form.name) }}
+	</div>
+
+	<div class="form__widget">	
+		{{ macros.bigTransparentField(form.name) }}
+	</div>
+
+
+	<div class="form__widget">	
+		<label>Job code:</label>
+		{{ macros.textField(form.job_code) }}
+	</div>
+
+	<div class="form__widget">	
+		<label>Description:</label>
+		{{ macros.textField(form.description) }}
+	</div>
+
+	
+	<div class='form__widget'>
+		<label>Preview URL:</label>
+		{{ macros.textField(form.preview_url) }}
+		<span class="label__helper">
+			Where you can find the working code (if applicable), eg http://preview.nzfest.springload.co.nz/
+		</span>
+	</div>
+
+	<div class='form__widget'>
+		<label>Basecamp URL:</label>
+		{{ macros.textField(form.basecamp_url) }}
+		<span class="label__helper">
+			e.g http://springload.basecamp.com/xxx
+		</span>
+	</div>
+</div>
+<div class="">
+	<div class="content clearfix">
+		<p class='right'>
+			<span class='btn btn-secondary small' data-add-group>Add work block</span>
+		</p>
+		<h2 class='left'>Work blocks</h4>
+	</div>
+	
+	<div data-group-container class='group__container'></div>
+
+	<div class=" content">
+		<a href="/project/{{name}}/{{project}}/" class='btn btn-cancel'>Cancel</a>
+
+		<button class='btn btn-primary' type="submit">
+			Save
+		</button>
+	</div>
+</div>
+	{{ form_end(form) }}
+{% endblock %}

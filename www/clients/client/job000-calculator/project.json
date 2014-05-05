@@ -1,0 +1,19 @@
+{
+    "name": "Project name",
+    "job_code": "SL000",
+    "preview_url": "http://some-client.co.nz",
+    "basecamp_url": "http://basecamp.com/XXX",
+    "description": "This is the project description",
+    "groups": [
+        {
+            "name": "Work block 3",
+            "id": 2,
+            "order": 0
+        },
+        {
+            "name": "default",
+            "id": 0,
+            "order": 1
+        }
+    ]
+}

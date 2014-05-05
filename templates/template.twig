@@ -1,0 +1,46 @@
+{% import "macros.twig" as macros %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Client previews | Springload
+	</title>
+	<link rel="stylesheet" type="text/css" href="/{{app.config.asset_path}}/screen.css">
+</head>
+<body>
+
+
+{% block layout %}
+	
+	{% block bar %}
+		{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+		<div class='userbar'>
+			<div class='right'>
+				<a href="{{ path('logout') }}" class='btn btn-secondary small'>Logout</a>
+			</div>
+			{% if is_granted('ROLE_ADMIN') %}
+				<a href="/">Home</a> | 
+				<a href="/admin/users">Manage users</a>
+			{% endif %}
+			
+		</div>
+	{% endif %}
+	{% endblock %}
+
+
+	{% block content_outer %}
+
+	<div class='content'>
+		
+	{% block content %}
+	
+	
+	{% endblock %}
+		</div>
+	{% endblock %}
+
+{% endblock %}	
+	
+	<script type="text/javascript" src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+    "name": "Project name",
+    "job_code": "SL000",
+    "preview_url": "http://some-client.co.nz",
+    "basecamp_url": "http://basecamp.com/XXX",
+    "description": "This is the project description",
+    "groups": [
+        {
+            "id": "0",
+            "date": "",
+            "title": "",
+            "order": "0",
+            "anchor": ""
+        }
+    ]
+}

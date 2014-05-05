@@ -1,0 +1,68 @@
+{% extends "template.twig" %}
+
+{% block content_outer %}
+
+<div class="project__meta content">
+	<h4>
+		<a href="/project/{{name}}">{{client.name}}</a>
+	</h4>
+	<h1>
+		<span class="lightweight">{{ project.job_code }}</span> {{ project.name }}
+	</h1>
+
+	<p class='intro'>
+		{{ project.description }}
+	</p>
+
+	<p>
+	{% if is_granted('ROLE_ADMIN') %}
+	
+		<a href="{{ edit }}" class='btn btn-primary'>Edit this project</a>
+	
+	{% endif %}
+
+	{% if project.basecamp_url %}
+	
+		<a href="{{ project.basecamp_url }}" class='btn btn-secondary'>See this project on basecamp</a>
+	{% endif %}
+	</p>
+	
+</div>
+
+
+<div class="project__items content">
+	{% if project.groups|length == 0 %} 
+	<p>
+		No images yet
+	</p>
+	{% endif %}
+
+	{% for group in project.blocks %}
+
+		{% for item in group.data %}
+			{% if loop.first %}
+				<h2>{{group.name|default("Default un-named group")}}</h2>
+			{% endif %}
+
+			{% if loop.first %}<ul>{% endif %}
+			<p>
+				{# link to first image in seq. #}
+				<a href="{{item.path}}/1">{{item.data.name|default(item.name)}}</a><br>
+				<p>
+					{{ item.description|default("") }}
+				</p>
+				<p class='small lightweight'>
+					{{ macros.date_modified(item.mtime) }}
+				</p>
+				
+			</p>
+			
+			{% if loop.last %}</ul>{% endif %}
+
+		{% endfor %}
+	{% endfor %}
+
+</div>
+
+
+{% endblock %}

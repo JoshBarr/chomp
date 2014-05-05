@@ -1,0 +1,34 @@
+{% extends "template.twig" %}
+
+
+{% block content_outer %}
+	
+	<div class="project__meta content">
+		<h1>Client preview sites</h1>
+	</div>
+	<div class="content">
+		{% if is_granted('ROLE_ADMIN') %}
+
+		{% for dir in directories %}
+			{% if loop.first %}<ul>{% endif %}
+			<h2>
+				<a href="/project/{{dir.name}}">
+				<span class="client__logo">
+					<img src="{{dir.data.logo|default("")}}" />
+				</span>
+				{% if dir.data %}
+					{{dir.data.name}}{% else %}{{dir.name}}
+				{% endif %}
+				</a>
+			</h2>
+			<p>
+				{{ macros.date_modified(dir.mtime) }}
+			</p>
+			{% if loop.last %}</ul>{% endif %}
+
+		{% endfor %}
+
+		{% endif %}
+	</div>
+	
+{% endblock %}

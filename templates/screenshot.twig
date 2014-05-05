@@ -1,0 +1,15 @@
+{% extends "template.twig" %}
+
+{% block layout %}
+
+{% if image %}
+	<a href="{% if image.next %}{{ image.next.index }}{% else %}../{% endif %}">
+		<img src="/clients/{{ relpath }}/{{ image.name }}">
+	</a>
+{% else %}
+<p>
+	No image
+</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "template.twig" %}
+
+
+{% block content_outer %}
+{{ form_start(form) }}
+<div class="project__meta content">
+
+	{{ form_errors(form) }}
+
+	
+
+	<div class="form__errors">	
+		{{ form_errors(form.name) }}
+	</div>
+
+	<div class="form__widget">	
+		{{ macros.bigTransparentField(form.name) }}
+	</div>
+
+	<div class='form__widget'>
+		<label>Logo:</label>
+
+		{{ macros.textField(form.logo) }}
+		<span class="label__helper">
+			Path to the logo file, e.g /assets/images/client.png
+		</span>
+	</div>
+
+	<div class='form__widget'>
+		<label>URL:</label>
+		{{ macros.textField(form.url) }}
+		<span class="label__helper">
+			Client's public URL, e.g http://springload.co.nz/
+		</span>
+	</div>
+
+
+	<div class="form__actions">
+		<a href="/project/{{name}}/" class='btn btn-cancel'>Cancel</a>
+
+		<button class='btn btn-primary' type="submit">
+			Save
+		</button>
+	</div>
+	{{ form_end(form) }}
+
+</div>
+<div class="content">
+	
+
+
+</div>
+
+{% endblock %}
