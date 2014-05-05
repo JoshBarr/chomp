@@ -1,0 +1,4 @@
+chomp
+=====
+
+Preview static images.
