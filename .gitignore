@@ -5,3 +5,5 @@ node_modules/
 composer.phar
 composer.lock
 _auth
+.idea/
+build/

@@ -104,7 +104,20 @@ if (!$schema->tablesExist('users')) {
     $schema->createTable($users);
 
 
-    
+    $app['db']->insert('users', array(
+        'username' => 'test',
+        'password' => password($app, 'test'),
+        'roles' => 'ROLE_USER',
+        'paths' => '*'
+    ));
+
+    $app['db']->insert('users', array(
+        'username' => 'admin',
+        'password' => password($app, 'admin'),
+        'roles' => 'ROLE_ADMIN',
+        'paths' => '*'
+    ));
+
 }
 
 
@@ -138,6 +151,8 @@ foreach($all_users as $user) {
             $name => array($user['roles'], $user['password'])
         )
     );
+
+
 }
 
 
@@ -159,14 +174,13 @@ $app['security.role_hierarchy'] = array(
 
 
 
-
 // ----------------------------------------------------------------------------
 // Routes
 // ----------------------------------------------------------------------------
 
 // Register routes
 $app->get('/', function () use ( $app ) {
-    
+
     $allClients = new Springload\ClientList($app['config']['clients']);
 
     return $app['twig']->render("homepage.twig", array(
@@ -235,14 +249,14 @@ $app->post('/admin/users/new', function(Request $request) use ($app) {
 
 
 $app->get('/admin/users/{action}/{id}', function(Request $request, $action, $id) use ($app) {
-    
+
     $user = getUser($app['db'], $id);
 
     if ($action == "delete") {
         if (strpos($user['roles'], "ADMIN") === false) {
-            $user = $app['db']->delete('users', array('id' => $id)); 
+            $user = $app['db']->delete('users', array('id' => $id));
         }
-            
+
         return $app->redirect("/admin/users");
     }
 
@@ -291,7 +305,7 @@ $app->post('/admin/users/{action}/{id}', function(Request $request, $action, $id
 // ----------------------------------------------------------------------------
 
 $app->match('/edit/{client}/', function (Request $request, $client="", $project="") use ( $app ) {
-        
+
     $clientObject = new Springload\ClientProjectList($app['config']['clients'], $client);
 
     $data = $clientObject->getData();
@@ -326,11 +340,13 @@ $app->match('/edit/{client}/', function (Request $request, $client="", $project=
 
 
 $app->match('/edit/{client}/{project}/', function (Request $request, $client="", $project="") use ( $app ) {
-        
+
     $clientObject = new Springload\ClientProjectList($app['config']['clients'], $client);
     $projectObject = new Springload\ClientProject($clientObject, $project);
 
     $data = $projectObject->getData();
+
+//    $blocks = $projectObject->getData();
 
 
     $form = $app['form.factory']->createBuilder('form', $data)
@@ -340,7 +356,7 @@ $app->match('/edit/{client}/{project}/', function (Request $request, $client="",
         ->add('preview_url', 'text', array('required'=> false))
         ->add('basecamp_url')
         ->add('groups', 'hidden', array(
-                'data'   => json_encode($projectObject->getData()['blocks'])
+                'data'   => json_encode($data['blocks'])
                 )
             )
         ->getForm();
@@ -395,14 +411,14 @@ $app->get('/project/{client}/', function ($client) use ( $app ) {
 
 
 $app->get('/project/{client}/{project}/', function ($client, $project)  use ($app) {
-    
+
     if (!protectUrl($app, $client)) {
         return $app->redirect('/login');
     }
 
     $clientObject = new Springload\ClientProjectList($app['config']['clients'], $client);
     $projectObject = new Springload\ClientProject($clientObject, $project);
-    
+
     $edit_url = false;
 
     if ($app['security']->isGranted('ROLE_ADMIN')) {
@@ -433,7 +449,7 @@ $app->get('/project/{client}/{project}/{dir}/', function($client, $project, $dir
 // ----------------------------------------------------------------------------
 
 $app->get('/project/{client}/{project}/{dir}/{screenshot}', function ($client, $project, $dir, $screenshot) use ( $app ) {
-    
+
     if (!protectUrl($app, $client)) {
         return $app->redirect('/login');
     }

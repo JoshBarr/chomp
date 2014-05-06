@@ -5,6 +5,8 @@
 {{ form_start(form) }}
 <div class="project__meta content" data-edit-project>
 
+    <a href="/project/{{name}}/{{project}}/">Back to project</a>
+
 	{{ form_errors(form) }}
 
 	<div class="form__errors">	
@@ -16,7 +18,8 @@
 	</div>
 
 
-	<div class="form__widget">	
+
+    <div class="form__widget">
 		<label>Job code:</label>
 		{{ macros.textField(form.job_code) }}
 	</div>

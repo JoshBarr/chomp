@@ -71,7 +71,7 @@ class DirectoryList
             $string = file_get_contents($filename);
             return json_decode($string, true);
         }
-        return [];
+        return array();
     }
 
     public function createJsonDefault($filename) {

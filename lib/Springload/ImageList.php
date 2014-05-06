@@ -15,8 +15,8 @@ class ImageList
 {
     protected $dir;
 
-    protected $valid_extensions = ["mp4", "mov", "gif", "png", "jpg", "svg", "pdf"];
-    protected $allow_types = array('image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'image/png', 'image/bmp', 'image/bitmap');
+    var $valid_extensions = array("mp4", "mov", "gif", "png", "jpg", "svg", "pdf");
+    var $allow_types = array('image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'image/png', 'image/bmp', 'image/bitmap');
 
     public function __construct($dir)
     {
@@ -34,7 +34,7 @@ class ImageList
             if ($fileInfo->isDot()) continue;
             if ($fileInfo->isDir()) continue;
             if (startswith($fileInfo->getFilename(), ".")) continue; 
-            if (!preg_match("/^[a-zA-Z0-9_\.\-]*$/", $name )) continue;
+//            if (!preg_match("/^[a-zA-Z0-9_\.\-]*$/", $name )) continue;
 
             $images[] = array(
                 "name" => $fileInfo->getFilename(),
@@ -69,7 +69,11 @@ class ImageList
     		$this->ls();
     	}
 
-    	$image = $this->images[$index];
-    	return $image;
+        if (sizeof($this->images) > 0) {
+            $image = $this->images[$index];
+            return $image;
+        }
+
+    	return false;
     }
 }

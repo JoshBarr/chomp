@@ -1,3 +1,91 @@
+var pfx = ["webkit", "moz", "MS", "o", ""];
+function PrefixedEvent(element, type, callback) {
+    for (var p = 0; p < pfx.length; p++) {
+        if (!pfx[p]) type = type.toLowerCase();
+        element.addEventListener(pfx[p]+type, callback, false);
+    }
+}
+
+
+var Group = function(id, data) {
+    this._id = id;
+    this.order = 0;
+    if (!data) {
+        data = jQuery.extend(true, {}, this.defaults);
+    }
+    return this.render(data);
+};
+
+Group.prototype = {
+    defaults: {
+        "name": "Work block title...",
+        "description": "Work block description...",
+        "order": 0,
+        "date": +new Date(),
+        "id": 0
+    },
+    render: function(data) {
+        data.id = this._id;
+        var div = document.createElement('div');
+        div.innerHTML = nunjucks.render("group.j2", data);
+        this.el = div.firstElementChild;
+        this.data = data;
+
+        this.titleEl = this.el.querySelector("[data-group-field='title']");
+        this.dateEl = this.el.querySelector("[data-group-field='date']");
+        this.sortDown = this.el.querySelector("[data-sort-down]");
+        this.sortUp = this.el.querySelector("[data-sort-up]");
+
+        this.itemContainer = this.el.querySelector("[data-items]");
+        return this;
+    },
+    getEl: function() {
+        return this.el;
+    },
+    setOrder: function(num) {
+        this.order = +num;
+
+        var toggleClass = "control--hide";
+
+        if (this.order === 0) {
+            this.sortUp.classList.add(toggleClass);
+        } else {
+            if (this.sortUp.classList.contains(toggleClass)) {
+                this.sortUp.classList.remove(toggleClass);
+            }
+        }
+
+        if (this.isLast) {
+            this.sortDown.classList.add(toggleClass);
+        } else {
+            if (this.sortDown.classList.contains(toggleClass)) {
+                this.sortDown.classList.remove(toggleClass);
+            }
+        }
+    },
+    setLast: function(bool) {
+        this.isLast = bool;
+    },
+    getData: function() {
+        return this.data;
+    },
+    getId: function() {
+        return this._id;
+    },
+    saveData: function() {
+        return {
+            "name": this.titleEl.value,
+            "date": this.dateEl.value,
+            "id": +this._id,
+            "order": this.data.order,
+            "blocks": []
+        }
+    }
+};
+
+
+
+
 module.exports =  {
     originalFormElementId: "form_groups",
     containerSelector: '[data-group-container]',
@@ -5,10 +93,14 @@ module.exports =  {
     addSelector: "[data-add-group]",
     deleteSelector: "[data-delete-group]",
     formSelector: "form[name='form']",
+    upSelector: "[data-sort-up]",
+    downSelector: "[data-sort-down]",
+    sortSelector: "[data-sort]",
     _divs: [],
     _sortables: [],
+    _groups: [],
     groupTemplate: {
-        "title": "Work block title...",
+        "name": "Work block title...",
         "description": "Work block description...",
         "order": 0,
         "date": +new Date(),
@@ -20,6 +112,7 @@ module.exports =  {
         this.formElement = document.getElementById(this.originalFormElementId);
 		var json = JSON.parse(this.formElement.value);
 
+
         this.addGroupBtn = document.querySelector(this.addSelector);
         this.deleteGroupBtn = document.querySelectorAll(this.deleteSelector);
         this.container = document.querySelector(this.containerSelector);
@@ -28,61 +121,30 @@ module.exports =  {
         this.formEl.addEventListener("submit", this, false);
 
         this.render(json);
+
 	},
-
-    serialize: function() {
-        var groups = document.querySelectorAll(this.groupSelector);
-        var group, items, item, itemData, groupData, data, len;
-
-        data = [];
-        len = groups.length;
-
-        for (var i = 0; i < len; i++) {
-            group = groups[i];
-            groupId = group.dataset.sortableGroup;
-
-            items = group.querySelectorAll("[data-item]");
-            itemData = [];
-
-            for (var n = 0; n < items.length; n++) {
-                item = items[n];
-
-                itemData.push({
-                    "name": item.name.value,
-                    "description": item.description.value,
-                    "group": groupId,
-                    "id": item.dataset.item,
-                    "path": item.dataset.path
-                });
-            }
-
-            groupData = {
-                "name": group.querySelector("[data-group-field='title']").value,
-                "date": group.querySelector("[data-group-field='date']").value,
-                "id": +groupId,
-                "order": i,
-                "blocks": itemData
-            };
-
-            data.push(groupData);
-        }
-
-        this.formElement.value = JSON.stringify(data);
-
-    },  
 
     handleEvent: function(e) {
         switch (e.type) {
             case "click":
                 if (e.target === this.addGroupBtn) {
-                    this.handleAddGroup(e);
+                    return this.handleAddGroup(e);
                 }
                 
-                if (e.target.dataset.deleteGroup) {
-                    this.handleDeleteGroup(e);
+                if (typeof(e.target.dataset.deleteGroup) !== "undefined") {
+                    return this.handleDeleteGroup(e);
+                }
+
+                if (typeof(e.target.dataset.sortDown) !== "undefined") {
+                    return this.moveGroup("down", e.target.dataset.sortDown);
+                }
+
+                if (typeof(e.target.dataset.sortUp) !== "undefined") {
+                    return this.moveGroup("up", e.target.dataset.sortUp);
                 }
 
                 break;
+
             case "submit":
                 this.serialize();
                 return true; 
@@ -91,21 +153,27 @@ module.exports =  {
 
     render: function(json) {
         var container = this.container;
+        var groups = this._groups;
+        var data, div, group;
+
+        var ids = [];
 
         for (var i = 0; i< json.length; i++) {
-            var item = json[i];
-            var div = this.renderItem(item);
-            container.appendChild(div.firstElementChild);
+            data = json[i];
+            group = new Group(data.id, data);
+            groups.push(group);
+            container.appendChild(group.getEl());
+            ids.push(data.id);
         }
 
+        // IDs may not come back in a logical order. Sort 'em out.
+        this.setNextId(Math.max.apply(null, ids) + 1);
+        this.updateGroupOrders();
         this.bindSortables();
     },
 
-    renderItem: function(item) {
-        var div = document.createElement('div');
-        div.innerHTML = nunjucks.render("group.j2", item);
-        this._divs.push(div);
-        return div;
+    setNextId: function(id) {
+        this.nextId = id;
     },
 
     bindSortables: function() {
@@ -136,67 +204,187 @@ module.exports =  {
             }
         });
 
-        $(this.containerSelector).sortable({
-            items: this.groupSelector,
-            axis: "y" ,
-            opacity: .5,
-            // revert: true
-        });
+//        $(this.containerSelector).sortable({
+//            items: this.groupSelector,
+//            axis: "y" ,
+//            opacity: .5,
+//            // revert: true
+//        });
     },
 
     unbindSortables: function() {
         $("[data-items]").sortable("destroy");
-        $(this.containerSelector).sortable("destroy");
-    },
-
-    addGroup: function() {
-        var container = this.container;
-        this.unbindSortables();
-        var newGroupData = jQuery.extend(true, {}, this.groupTemplate);
-        newGroupData.id = this._divs.length;
-
-        var newGroupEl = this.renderItem(newGroupData);
-        container.insertBefore(newGroupEl.firstElementChild, container.firstChild);
-
-        this.bindSortables();
+//        $(this.containerSelector).sortable("destroy");
     },
 
     handleAddGroup: function(e) {
-        this.addGroup();
+        var container = this.container;
+        this.unbindSortables();
+
+        var groupId = this.nextId;
+        var group = new Group(groupId);
+        container.insertBefore(group.getEl(), container.firstChild);
+
+        this.bindSortables();
+
+        this.setNextId(groupId + 1);
+
+        this._groups.push(group);
+        this.updateGroupOrders();
+    },
+
+    getGroup: function(num) {
+        return this._groups[num];
+    },
+
+    getGroupById: function(num) {
+        var i, group, groups, len;
+        groups = this._groups;
+        len = groups.length;
+        num = +num;
+
+        for (i = 0; i < len; i++) {
+            group = groups[i];
+
+            if (group.getId() === num) {
+                return group;
+            }
+        }
+    },
+
+    removeGroupById: function(id) {
+        var i, group, groups, len;
+        groups = this._groups;
+        len = groups.length;
+
+
     },
 
     handleDeleteGroup: function(e) {
-        var $parentEl = $(e.target).parents(".field__group");
-        var parentEl, items, defaultGroup, defaultGroupItemContainer, fragment;
+        var parentGroup, i, parentEl, items, defaultGroup, defaultGroupItemContainer, fragment;
 
-        if ($parentEl.length) {
-            parentEl = $parentEl[0];
-            
-            items = parentEl.querySelectorAll('[data-item]');
-            
-            if (items.length) {
+        var groupId = +(e.target.dataset.deleteGroup);
+        parentGroup = this.getGroupById(groupId);
 
-                fragment = document.createDocumentFragment();
+        if (!parentGroup) {
+            return;
+        }
 
-                for (var i = 0; i < items.length; i++) {
-                    fragment.appendChild(items[i]);
-                }
+        // Append the items to the default group
+        defaultGroup = this.getGroupById(0);
 
-                // Append the items to the default group
-                defaultGroup = document.querySelector('[data-sortable-group="0"]');
-                
+        parentEl = parentGroup.getEl();
+        items = parentEl.querySelectorAll('[data-item]');
+
+        if (items.length) {
+
+            fragment = document.createDocumentFragment();
+
+            for (i = 0; i < items.length; i++) {
+                fragment.appendChild(items[i]);
+            }
+        }
+
+        parentEl.classList.add("group--removed");
+
+        // Allow some time for a pretty animation
+
+        setTimeout(function() {
+            if (fragment) {
+                defaultGroupItemContainer = defaultGroup.itemContainer;
+                defaultGroupItemContainer.insertBefore(fragment, defaultGroupItemContainer.firstElementChild);
+            }
+            parentEl.parentElement.removeChild(parentEl);
+            this.updateGroupOrders();
+            this.removeGroupById(groupId);
+        }.bind(this), 220);
+    },
+
+
+
+
+    moveGroup: function(direction, id) {
+        var parentGroup = this.getGroupById(id);
+
+        if (!parentGroup) {
+            return;
+        }
+
+        var parent = parentGroup.getEl();
+        var targetNode;
+
+        if (direction === "up") {
+            targetNode = parent.previousElementSibling;
+            if (!targetNode) {
+                return;
+            }
+        } else if (direction === "down") {
+            targetNode = parent.nextElementSibling;
+            if (targetNode !== null) {
+                targetNode = targetNode.nextElementSibling;
+            }
+        }
+
+
+        parent.parentElement.insertBefore(parent, targetNode);
+
+        this.updateGroupOrders();
+
+    },
+
+
+    updateGroupOrders: function() {
+        var siblings, item, sibling, i;
+        siblings = this.container.querySelectorAll(this.groupSelector);
+
+        for (i = 0; i < siblings.length; i++) {
+            sibling = siblings[i];
+            item = this.getGroupById(+(sibling.dataset.sortableGroup));
+            if (!item) {
+                continue;
             }
 
-            trueParent = parentEl;
-            trueParent.classList.add("group--removed");
-            
-            setTimeout(function() {
-                if (defaultGroup) {
-                    defaultGroupItemContainer = defaultGroup.querySelector("[data-items]");
-                    defaultGroupItemContainer.insertBefore(fragment, defaultGroupItemContainer.firstChild);
-                }
-                trueParent.parentElement.removeChild(trueParent);
-            }, 220);            
+            if (i === siblings.length-1) {
+                item.setLast(true);
+            } else {
+                item.setLast(false);
+            }
+
+            item.setOrder(i);
         }
+    },
+
+    serialize: function() {
+        var groups = this._groups;
+        var group, items, item, itemData, groupData, data, len;
+
+        data = [];
+        len = groups.length;
+
+        for (var i = 0; i < len; i++) {
+            group = groups[i];
+
+            items = group.querySelectorAll("[data-item]");
+            itemData = [];
+
+            for (var n = 0; n < items.length; n++) {
+                item = items[n];
+
+                itemData.push({
+                    "name": item.name.value,
+                    "description": item.description.value,
+                    "group": groupId,
+                    "id": item.dataset.item,
+                    "path": item.dataset.path
+                });
+            }
+
+            groupData = group.saveData();
+            groupData["blocks"] = itemData;
+
+            data.push(groupData);
+        }
+
+        this.formElement.value = JSON.stringify(data);
     }
 };

@@ -48,14 +48,15 @@
 			<p>
 				{# link to first image in seq. #}
 				<a href="{{item.path}}/1">{{item.data.name|default(item.name)}}</a><br>
-				<p>
-					{{ item.description|default("") }}
-				</p>
-				<p class='small lightweight'>
-					{{ macros.date_modified(item.mtime) }}
-				</p>
+            </p>
+            <p>
+                {{ item.description|default("") }}
+            </p>
+				{#<p class='small lightweight'>#}
+					{#{{ macros.date_modified(item.mtime) }}#}
+				{#</p>#}
 				
-			</p>
+
 			
 			{% if loop.last %}</ul>{% endif %}
 
