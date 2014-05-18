@@ -12,15 +12,20 @@ class DirectoryList
         $this->dir = $dir;        
     }
     
-    public function ls()
+    public function ls($directory = false)
     {
+
+        if ($directory == false) {
+            $directory = $this->dir;
+        }
+
         $directories = array();
 
-        if (!is_dir($this->dir)) {
+        if (!is_dir($directory)) {
             return $directories;
         }
 
-        foreach (new DirectoryIterator($this->dir) as $fileInfo) {
+        foreach (new DirectoryIterator($directory) as $fileInfo) {
             $dir = $fileInfo->getPathname();
             $name = $fileInfo->getFilename();
             $project_data = array();

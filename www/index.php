@@ -14,7 +14,7 @@ use Springload\ClientProjectList;
 use Springload\ClientProject;
 use Springload\ImageList;
 use Springload\UserProvider;
-
+use Springload\ProjectController;
 
 
 
@@ -409,66 +409,10 @@ $app->get('/project/{client}/', function ($client) use ( $app ) {
 ->bind('client');
 
 
-
-$app->get('/project/{client}/{project}/', function ($client, $project)  use ($app) {
-
-    if (!protectUrl($app, $client)) {
-        return $app->redirect('/login');
-    }
-
-    $clientObject = new Springload\ClientProjectList($app['config']['clients'], $client);
-    $projectObject = new Springload\ClientProject($clientObject, $project);
-
-    $edit_url = false;
-
-    if ($app['security']->isGranted('ROLE_ADMIN')) {
-        $edit_url = "/edit/$client/$project/";
-    }
-
-    return $app['twig']->render("project.twig", array(
-        'name' => $client,
-        // 'project' => $project,
-        'edit' => $edit_url,
-        'project' => $projectObject->getData(),
-        'client' => $clientObject->getData()
-    ));
-})
-->assert('client', '^(?!admin|edit).*$');
-
-
-
-// Redirect attempts to access the images directories to the first image instead
-
-$app->get('/project/{client}/{project}/{dir}/', function($client, $project, $dir) use ($app) {
-    return $app->redirect("/project/" . $client . "/" . $project . "/" . $dir . "/1");
-})
-->assert('client', '^(?!admin|edit).*$');
-
-// ----------------------------------------------------------------------------
-// Image viewing methods
-// ----------------------------------------------------------------------------
-
-$app->get('/project/{client}/{project}/{dir}/{screenshot}', function ($client, $project, $dir, $screenshot) use ( $app ) {
-
-    if (!protectUrl($app, $client)) {
-        return $app->redirect('/login');
-    }
-
-    $relpath = $client . "/" . $project . "/" . $dir;
-
-    $sl = new Springload\ImageList(__DIR__ . "/" . $app['config']['clients_path'] . "/" . $relpath);
-    $images = $sl->ls();
-
-    return $app['twig']->render("screenshot.twig", array(
-        'name' => $client,
-        'project' => $project,
-        'image' => $sl->image_for($screenshot-1),
-        'images' => $images,
-        'relpath' => $relpath
-    ));
-})
-->assert('screenshot', '\d+')
-->assert('client', '^(?!admin|edit).*$');
+$app->get('/project/{client}/{project}', "Springload\ProjectController::redirect");
+$app->get('/project/{client}/{project}/', "Springload\ProjectController::index");
+$app->get('/project/{client}/{project}/{args}', "Springload\ProjectController::sequence")
+->assert("args", ".*");
 
 // ----------------------------------------------------------------------------
 // Go!

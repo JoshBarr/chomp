@@ -36,33 +36,20 @@
 		No images yet
 	</p>
 	{% endif %}
-
 	{% for group in project.blocks %}
-
-		{% for item in group.data %}
-			{% if loop.first %}
-				<h2>{{group.name|default("Default un-named group")}}</h2>
-			{% endif %}
-
-			{% if loop.first %}<ul>{% endif %}
-			<p>
-				{# link to first image in seq. #}
-				<a href="{{item.path}}/1">{{item.data.name|default(item.name)}}</a><br>
-            </p>
-            <p>
-                {{ item.description|default("") }}
-            </p>
-				{#<p class='small lightweight'>#}
-					{#{{ macros.date_modified(item.mtime) }}#}
-				{#</p>#}
-				
-
+		{% if "children" in group|keys %}
+			<h2>{{group.name}}</h2>
 			
-			{% if loop.last %}</ul>{% endif %}
-
-		{% endfor %}
+			{% for child in group.children %}
+				{% include "project-item.twig" with {"data": child, "group": group.name} %}
+			{% endfor %}
+			
+			<hr>
+		{% else %}
+			{% include "project-item.twig" with {"data": group} %}
+		{% endif %}
+	
 	{% endfor %}
-
 </div>
 
 
