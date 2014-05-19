@@ -1835,20 +1835,38 @@ output += "<div class=\"field__group\" data-sortable-group=\"";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "id"), env.autoesc);
 output += "\" data-path=\"";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "relpath"), env.autoesc);
-output += "\">\n    ";
-if(runtime.contextOrFrameLookup(context, frame, "id") > 0) {
-output += "\n    <div class=\"clearfix\">\n\t\t<div class=\"right\">\n\n\n                ";
+output += "\">\n\n    ";
+output += "\n\t\t";
+output += "\n\n\n                ";
 output += "\n\n                ";
 output += "\n                   ";
 output += "\n                    ";
 output += "\n                ";
-output += "\n\n\t\t</div>\n\t\t<div class=\"left\">\n\t\t\t<h3>\n\t\t\t\t<input type=\"text\" class=\"field field--invisible  field--write-in\" value=\"";
+output += "\n\n\t\t";
+output += "\n\t\t";
+output += "\n\n    ";
+if(runtime.contextOrFrameLookup(context, frame, "id") > 0) {
+output += "\n        <h3>\n            <input type=\"text\" class=\"field field--invisible  field--write-in\" value=\"";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "name"), env.autoesc);
-output += "\" data-group-field=\"title\">\n\t\t\t</h3>\n\t\t</div>\n\t</div>\n    <div>\n        Date: <input name=\"date\" value=\"";
+output += "\" data-group-field=\"title\">\n        </h3>\n    ";
+;
+}
+else {
+output += "\n        <h4>\n            <span>";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "name"), env.autoesc);
+output += "</span>\n        </h4>\n    ";
+;
+}
+output += "\n\t\t";
+output += "\n\t";
+output += "\n    ";
+if(runtime.contextOrFrameLookup(context, frame, "id") > 0) {
+output += "\n    <div>\n        Date: <input name=\"date\" value=\"";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "time"), env.autoesc);
 output += "\" type=\"date\" data-group-field=\"date\">\n    </div>\n    ";
 ;
 }
+output += "\n    ";
 output += "\n\n\n\t\n\t<div data-items class=\"group__items ";
 if(!runtime.contextOrFrameLookup(context, frame, "data")) {
 output += "group--empty";
@@ -1892,9 +1910,9 @@ output += "<fieldset class=\"field__item\" data-item=\"";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"id", env.autoesc), env.autoesc);
 output += "\" data-path=\"";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"relpath", env.autoesc), env.autoesc);
-output += "\">\n    <span class='small'>Path: ";
-output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"path", env.autoesc), env.autoesc);
-output += " </span>\n    <p>\n        Title: <input name=\"name\" type=\"text\" class=\"field  field--write-in\" value=\"";
+output += "\">\n    <span class='field__item__path'>Path: ";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"relpath", env.autoesc), env.autoesc);
+output += " </span>\n    <p>\n        Title: <input name=\"name\" type=\"text\" class=\"field  \" value=\"";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"name", env.autoesc), env.autoesc);
 output += "\">\n    </p>\n    <textarea class='field__textarea' name=\"description\">";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"description", env.autoesc), env.autoesc);

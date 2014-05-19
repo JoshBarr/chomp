@@ -7,11 +7,21 @@
 	<div class="content">
 		<h1>Client preview sites</h1>
 
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        {% if is_granted('ROLE_ADMIN') %}
+                <p>
+                    <a href="/admin/users" class="btn btn-outline -subtle-blue">Manage users</a>
+                    <a href="{{ path('logout') }}" class='btn btn-outline '>Logout</a>
+                </p>
+        {% endif %}
+            <hr>
+        {% endif %}
+
 		{% if is_granted('ROLE_ADMIN') %}
 
 		{% for dir in directories %}
 			{% if loop.first %}<ul>{% endif %}
-			<h2>
+			<h4>
 				<a href="/project/{{dir.name}}">
 				{#<span class="client__logo">
 					<img src="{{dir.data.logo|default("")}}" />
@@ -20,7 +30,7 @@
 					{{dir.data.name}}{% else %}{{dir.name}}
 				{% endif %}
 				</a>
-			</h2>
+			</h4>
 			<p>
 				{{ macros.date_modified(dir.mtime) }}
 			</p>

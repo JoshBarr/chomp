@@ -1,7 +1,7 @@
 <fieldset class="field__item" data-item="{{item.id}}" data-path="{{item.relpath}}">
-    <span class='small'>Path: {{ item.path }} </span>
+    <span class='field__item__path'>Path: {{ item.relpath }} </span>
     <p>
-        Title: <input name="name" type="text" class="field  field--write-in" value="{{ item.name }}">
+        Title: <input name="name" type="text" class="field  " value="{{ item.name }}">
     </p>
     <textarea class='field__textarea' name="description">{{ item.description }}</textarea>
 </fieldset>

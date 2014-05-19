@@ -2,38 +2,38 @@
 
 {% block layout %}
 
-<div class="project__meta content content--tight">
-		
-	
-
-	<p>
-	<a href="/project/{{name}}">{{client.name}}</a>
-
-	{% if is_granted('ROLE_ADMIN') %}
-	
-		<a href="{{ edit }}" class=''>Edit this project</a>
-	
-	{% endif %}
-
-	{% if project.basecamp_url %}
-	
-		<a href="{{ project.basecamp_url }}" class=''>See this project on basecamp</a>
-	{% endif %}
-	</p>
-	
-</div>
 
 
 <div class="project__items content">
 
-	<h1>
-		<span class="lightweight">{{ project.job_code }}</span> {{ project.name }}
+
+	<h1 class="project__heading">
+        <span>{{ project.name }}</span>
+		<span class="lightweight pill">{{ project.job_code }}</span>
 	</h1>
 
-	<p class='intro'>
+
+
+	<p class='intro lightweight'>
 		{{ project.description }}
 	</p>
 
+
+    <div class="mt-xl">
+        <p>
+            {#<a href="/project/{{name}}">{{client.name}}</a>#}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ edit }}" class='btn btn-outline -subtle-blue'>Edit this project</a>
+            {% endif %}
+
+            {% if project.basecamp_url %}
+
+                <a href="{{ project.basecamp_url }}" class='btn btn-outline'>See this project on basecamp</a>
+            {% endif %}
+        </p>
+
+    </div>
 
 	{% if project.blocks|length == 0 %} 
 	<p>
@@ -42,9 +42,9 @@
 	{% endif %}
 	{% for group in project.blocks %}
 		{% if "children" in group|keys %}
-			<h3>
+			<h4>
 				{{group.name}} - {{ macros.date_modified(group.date|default("")) }}
-			</h3>
+			</h4>
 			{% for child in group.children %}
 				{% if loop.first %}<dl>{% endif %}
 					{% include "project-item.twig" with {"data": child, "group": group.name} %}

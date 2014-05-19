@@ -1,17 +1,7 @@
 {% extends "template.twig" %}
 
-{% block content_outer %}
+{% block layout %}
 
-<div class="project__meta content">
-	
-
-
-	{% if is_granted('ROLE_ADMIN') %}
-	<p>
-		<a href="/edit/{{ name }}" class='btn btn-primary'>Edit this client</a>
-	</p>
-	{% endif %}
-</div>
 <div class="content">
 	<div class="clearfix client__header">
 		<div class="right">
@@ -19,10 +9,16 @@
 		</div>
 		<div>
 			<h1>{{client.name}}</h1>
-			<p>
-				{{client.url}}
-			</p>
+			{#<p>#}
+				{#{{client.url}}#}
+			{#</p>#}
+            {% if is_granted('ROLE_ADMIN') %}
+                <p>
+                    <a href="/edit/{{ name }}" class='btn btn-outline -subtle-blue'>Edit this client</a>
+                </p>
+            {% endif %}
 		</div>
+        <hr/>
 	</div>
 	
 
@@ -34,7 +30,7 @@
 	{% endif %}
 	{% for project in client.projects %}
 		{% if loop.first %}<ul class='list'>{% endif %}
-		<h2>
+		<h4>
 			{%- if project.data -%}
 			<span class="lightweight">{{ project.data.job_code|default("") }} </span>	
 			{%- endif -%}
@@ -45,7 +41,7 @@
 			{{project.name}}
 			{%- endif -%}
 			</a>
-		</h2>
+		</h4>
 		<p>
 			{{ macros.date_modified(project.mtime) }}
 		</p>

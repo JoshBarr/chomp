@@ -24,7 +24,7 @@
 		{{ macros.textField(form.job_code) }}
 	</div>
 
-	<div class="form__widget">	
+	<div class="form__widget textarea--big">
 		<label>Description:</label>
 		{{ macros.textField(form.description) }}
 	</div>
@@ -46,20 +46,20 @@
 		</span>
 	</div>
 </div>
-<div class="">
-	<div class="content clearfix">
+<div class="project__meta content">
+	<div class=" clearfix">
 		<p class='right'>
-			<span class='btn btn-secondary small' data-add-group>Add work block</span>
+			<span class='btn btn-secondary ' data-add-group>Add work block</span>
 		</p>
-		<h2 class='left'>Work blocks</h4>
+		<h1 class='left'>Work blocks</h1>
 	</div>
 	
-	<div data-group-container class='group__container'></div>
+	<div data-group-container class='mt-xl group__container'></div>
 
-	<div class=" content">
+	<div class="mt-xl">
 		<a href="/project/{{name}}/{{project}}/" class='btn btn-cancel'>Cancel</a>
 
-		<button class='btn btn-primary'  data-submit>
+		<button class='btn btn-primary' type="submit" data-submit>
 			Save
 		</button>
 	</div>

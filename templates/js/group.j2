@@ -1,7 +1,7 @@
 <div class="field__group" data-sortable-group="{{ id }}" data-path="{{ relpath }}">
-    {% if id > 0 %}
-    <div class="clearfix">
-		<div class="right">
+
+    {#<div class="clearfix">#}
+		{#<div class="right">#}
 
 
                 {#<span data-delete-group="{{ id }}" class='btn btn-outline small'>Delete</span>#}
@@ -11,17 +11,26 @@
                     {#<span class="btn btn-outline small" data-sort-down="{{ id }}">↓</span>#}
                 {#</span>#}
 
-		</div>
-		<div class="left">
-			<h3>
-				<input type="text" class="field field--invisible  field--write-in" value="{{ name }}" data-group-field="title">
-			</h3>
-		</div>
-	</div>
+		{#</div>#}
+		{#<div class="left">#}
+
+    {% if id > 0 %}
+        <h3>
+            <input type="text" class="field field--invisible  field--write-in" value="{{ name }}" data-group-field="title">
+        </h3>
+    {% else %}
+        <h4>
+            <span>{{ name }}</span>
+        </h4>
+    {% endif %}
+		{#</div>#}
+	{#</div>#}
+    {% if id > 0 %}
     <div>
         Date: <input name="date" value="{{ time }}" type="date" data-group-field="date">
     </div>
     {% endif %}
+    {#{% endif %}#}
 
 
 	
