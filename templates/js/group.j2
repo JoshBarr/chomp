@@ -1,37 +1,33 @@
-<div class="field__group" data-sortable-group="{{ id }}">
-	<div class="clearfix">
+<div class="field__group" data-sortable-group="{{ id }}" data-path="{{ relpath }}">
+    {% if id > 0 %}
+    <div class="clearfix">
 		<div class="right">
 
-            {% if id > 0 %}
-                <span data-delete-group="{{ id }}" class='btn btn-outline small'>Delete</span>
-            {% endif %}
 
-                <span data-sort>
-                   <span class="btn btn-outline small" data-sort-up="{{ id }}">↑</span>
-                    <span class="btn btn-outline small" data-sort-down="{{ id }}">↓</span>
-                </span>
+                {#<span data-delete-group="{{ id }}" class='btn btn-outline small'>Delete</span>#}
+
+                {#<span data-sort>#}
+                   {#<span class="btn btn-outline small" data-sort-up="{{ id }}">↑</span>#}
+                    {#<span class="btn btn-outline small" data-sort-down="{{ id }}">↓</span>#}
+                {#</span>#}
 
 		</div>
 		<div class="left">
 			<h3>
-				<input type="text" class="field field--invisible  field--write-in" value="{{ name|default('default') }}" data-group-field="title">
+				<input type="text" class="field field--invisible  field--write-in" value="{{ name }}" data-group-field="title">
 			</h3>
 		</div>
 	</div>
-	<div>
-		Date: <input name="date" value="{{ date }}" type="date" data-group-field="date">
-	</div>
+    <div>
+        Date: <input name="date" value="{{ date }}" type="date" data-group-field="date">
+    </div>
+    {% endif %}
+
+
 	
 	<div data-items class="group__items {% if not data %}group--empty{% endif %}">
-		{% for item in data %}
-
-		<form class="field__item" data-item="{{item.id}}" data-path="{{item.path}}">
-			<span class='small'>Path: {{ item.path }} </span> 
-			<p>
-				Title: <input name="name" type="text" class="field  field--write-in" value="{{ item.name }}">
-			</p>
-			<textarea class='field__textarea' name="description">{{ item.description }}</textarea>
-		</form>	
+		{% for item in children %}
+            {% include "sequence.j2" %}
 		{% endfor %}
 	</div>
 </div>

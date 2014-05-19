@@ -2,11 +2,15 @@
 namespace Springload;
 use Springload\DirectoryList;
 use Springload\Common;
+use Springload\Sequence;
+use Springload\WorkBlock;
 
 
 class ClientProject extends DirectoryList
 {
 	protected $jsonName = "project.json";
+
+    public $dir = false;
 
 	public $jsonDefault = array(
 		"name" => "Project name",
@@ -17,136 +21,138 @@ class ClientProject extends DirectoryList
 		"groups" => array()
 	);
 
-	protected $groupDefault = array(
-		"id" => "0",
-		"date" => "",
-		"title" => "",
-		"order" => "0",
-		"anchor" => ""
-	);
-
-	protected $blockDefault = array(
-		"name" => "A title for this set of images",
-		"description" => "A description for this set of images",
-		// "date" => "today",
-		"group" => "0"
-		);
-
 	public function __construct($clientObject, $project) {
         $this->dir = $clientObject->getDir() . "/" . $project; 
         $this->client = $clientObject;
-
-        $this->jsonDefault["groups"][] = $this->groupDefault;   
     }
 
     public function getData() {
     	$data = $this->getJson();
-    	// $data["blocks"] = $this->getBlocksByGroups($data["groups"]);
         $data["blocks"] = $this->getBlocks();
     	return $data;
     }
 
 
-    public function getBlocks() {
-        $blocks = $this->ls();
-        $newBlocks = array();
-
-        foreach ($blocks as $block) {
-            
-            if (startsWith($block["name"], "block-")) {
-                $children = $this->ls($block["path"]);
-                $block["children"] = array();
-
-                foreach ($children as $child) {
-                    $child["url"] = $block["name"] . "/" . $child["name"];
-                    $block["children"][] = $child;
-                }
-            }
-
-            $block["url"] = $block["name"];
-            $newBlocks[] = $block;
-        }
-
-        print_r($newBlocks);
-
-        return $newBlocks;
+    public function isBlock($path) {
+        return Common::startsWith($path, "block-");
     }
 
 
-  //   public function getBlocksByGroups($groups) {
-  //   	$blocks = $this->getBlocks();
-  //   	$ordered = array();
+    public function getBlocks() {
 
-  //   	foreach ($groups as $group) {
-  //   		$group["data"] = array();
+        $newBlocks = array();
+        $blocks = $this->ls(false, array(
+            "ignore_empty" => true,
+            "base_dir" => $this->dir
+        ));
 
-  //   		foreach ($blocks as $block) {
-    			
-  //   			if ($block['data']['group'] == $group['id']) {
-  //                   $block['data']['id'] = sha1($block['path']);
-  //                   $block['data']['path'] = $block['name'];
-  //                   $block['data']['mtime'] = $block['mtime'];
-  //   				$group['data'][] = $block["data"];
-  //   			}
-  //   		}
-  //   		$ordered[] = $group;
-  //   	}
+        foreach ($blocks as $block) {
+            if ($this->isBlock($block["relpath"])) {
+                $blockObject = new WorkBlock(
+                    array_merge($block,
+                        array(
+                            "base_dir" => $this->dir
+                        )
+                    )
+                );
+            } else {
+                $blockObject = new Sequence(
+                    array_merge($block,
+                        array(
+                            "base_dir" => $this->dir
+                        )
+                    )
+                );
 
-  //   	usort($ordered, function($a, $b) {
-		//     return $a['order'] - $b['order'];
-		// });
+                if (sizeof($blockObject->getImages()) == 0) {
+                    continue;
+                }
+            }
 
-  //   	return $ordered;
-  //   }
+            $newBlocks[] = $blockObject->toArray();
+        }
 
-    // public function getBlocks() {
-    // 	$blocks = $this->ls();
-    // 	$storage = new JsonStorage();
+        return $this->sortBlocks($newBlocks);
+    }
 
-    // 	foreach ($blocks as $block) {
-    // 		$block_json = $block["path"] . "/block.json";
+    public function sortBlocks($blocks) {
+        // Sort by blocks first
+        usort($blocks, function($a, $b) {
 
-    // 		if (!file_exists($block_json)) {
-    // 			$storage->store($block_json, $this->blockDefault);
-    // 		}
+            if (array_key_exists("children", $a) && !array_key_exists("children", $b)) {
+                return -1;
+            }
 
-    // 		$block['data'] = $this->readFileAsJson($block_json);
-    // 	}
+            if (array_key_exists("children", $b) && !array_key_exists("children", $a)) {
+                return 1;
+            }
 
-    // 	return $blocks;
-    // }
-
-
-    // public function saveData($data) {
-
-    //     $stripped_groups = array();
-    //     $blocks = array();
-
-    //     foreach ($data["groups"] as $group) {
-    //         $stripped_groups[] = array(
-    //             "name" => $group->name,
-    //             "id" => $group->id,
-    //             "order" => $group->order 
-    //         );
-    //         $blocks[] = $group->blocks;
-    //     }
-
-    //     $data["groups"] = $stripped_groups;
-        
-    //     // Save all the blocks separately...
-    //     unset($data["blocks"]);
+            // Sort blocks by mtime
+            if (array_key_exists("children", $b) && array_key_exists("children", $a)) {
+                return $a['ctime'] - $b['ctime'];
+            }
 
 
-    //     foreach ($blocks as $blockArray) {
-    //         foreach ($blockArray as $block) {
-    //             $actual_block = $block;
-    //             $path = $this->dir . "/" . $actual_block->path . "/block.json";
-    //             $this->save($path, $actual_block);
-    //         }
-    //     }
+            if (!array_key_exists("children", $b) && !array_key_exists("children", $a)) {
+
+                // Sort items by order if it's set
+                if (array_key_exists("order", $a) && array_key_exists("order", $b)) {
+                    return $a['order'] - $b['order'];
+
+                    // Otherwise sort by mtime
+                } else {
+                    return $a['ctime'] - $b['ctime'];
+                }
+            }
+        });
+
+        return $blocks;
+    }
+
+     public function saveData($data) {
+         $stripped_groups = array();
+         $blocks = array();
 
 
-    //     $filename = $this->getJsonFilename();
-    //     $this->save($filename, $data);
-    // }
+
+         foreach ($data["groups"] as $block) {
+             if ($this->isBlock($block['path'])) {
+                 $blockObject = new WorkBlock(array_merge($block, array(
+                     "base_dir" => $this->dir
+                 )));
+
+                 $blockObject->save();
+                 $this->saveTheChildren($block["children"]);
+
+             // Deal with defaults...
+             } else if ($block["path"] == "") {
+                 $blockObject = new WorkBlock(array_merge($block, array(
+                     "base_dir" => $this->dir
+                 )));
+
+                 $this->saveTheChildren($block["children"]);
+             } else {
+
+                 $sequenceObject = new Sequence(array_merge($block, array(
+                     "base_dir" => $this->dir
+                 )));
+                 $sequenceObject->save();
+             }
+         }
+
+
+
+         $filename = $this->getJsonFilename();
+         $this->save($filename, $data);
+
+     }
+
+    public function saveTheChildren($children) {
+        foreach($children as $child) {
+            $sequenceObject = new Sequence(array_merge($child, array(
+                "base_dir" => $this->dir
+            )));
+            $sequenceObject->save();
+        }
+    }
 }

@@ -29,12 +29,10 @@ class ImageList
 
         foreach (new DirectoryIterator($this->dir) as $fileInfo) {
             if (!in_array($fileInfo->getExtension(), $this->valid_extensions)) continue;
-            // if ($fileInfo->isExecutable()) continue;
 
             if ($fileInfo->isDot()) continue;
             if ($fileInfo->isDir()) continue;
             if (startswith($fileInfo->getFilename(), ".")) continue; 
-//            if (!preg_match("/^[a-zA-Z0-9_\.\-]*$/", $name )) continue;
 
             $images[] = array(
                 "name" => $fileInfo->getFilename(),

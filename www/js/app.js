@@ -1833,48 +1833,72 @@ var output = "";
 try {
 output += "<div class=\"field__group\" data-sortable-group=\"";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "id"), env.autoesc);
-output += "\">\n\t<div class=\"clearfix\">\n\t\t<div class=\"right\">\n\n            ";
+output += "\" data-path=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "relpath"), env.autoesc);
+output += "\">\n    ";
 if(runtime.contextOrFrameLookup(context, frame, "id") > 0) {
-output += "\n                <span data-delete-group=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "id"), env.autoesc);
-output += "\" class='btn btn-outline small'>Delete</span>\n            ";
+output += "\n    <div class=\"clearfix\">\n\t\t<div class=\"right\">\n\n\n                ";
+output += "\n\n                ";
+output += "\n                   ";
+output += "\n                    ";
+output += "\n                ";
+output += "\n\n\t\t</div>\n\t\t<div class=\"left\">\n\t\t\t<h3>\n\t\t\t\t<input type=\"text\" class=\"field field--invisible  field--write-in\" value=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "name"), env.autoesc);
+output += "\" data-group-field=\"title\">\n\t\t\t</h3>\n\t\t</div>\n\t</div>\n    <div>\n        Date: <input name=\"date\" value=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "date"), env.autoesc);
+output += "\" type=\"date\" data-group-field=\"date\">\n    </div>\n    ";
 ;
 }
-output += "\n\n                <span data-sort>\n                   <span class=\"btn btn-outline small\" data-sort-up=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "id"), env.autoesc);
-output += "\">↑</span>\n                    <span class=\"btn btn-outline small\" data-sort-down=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "id"), env.autoesc);
-output += "\">↓</span>\n                </span>\n\n\t\t</div>\n\t\t<div class=\"left\">\n\t\t\t<h3>\n\t\t\t\t<input type=\"text\" class=\"field field--invisible  field--write-in\" value=\"";
-output += runtime.suppressValue(env.getFilter("default").call(context, runtime.contextOrFrameLookup(context, frame, "name"),"default"), env.autoesc);
-output += "\" data-group-field=\"title\">\n\t\t\t</h3>\n\t\t</div>\n\t</div>\n\t<div>\n\t\tDate: <input name=\"date\" value=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "date"), env.autoesc);
-output += "\" type=\"date\" data-group-field=\"date\">\n\t</div>\n\t\n\t<div data-items class=\"group__items ";
+output += "\n\n\n\t\n\t<div data-items class=\"group__items ";
 if(!runtime.contextOrFrameLookup(context, frame, "data")) {
 output += "group--empty";
 ;
 }
 output += "\">\n\t\t";
 frame = frame.push();
-var t_3 = runtime.contextOrFrameLookup(context, frame, "data");
+var t_3 = runtime.contextOrFrameLookup(context, frame, "children");
 if(t_3) {for(var t_1=0; t_1 < t_3.length; t_1++) {
 var t_4 = t_3[t_1];
 frame.set("item", t_4);
-output += "\n\n\t\t<form class=\"field__item\" data-item=\"";
-output += runtime.suppressValue(runtime.memberLookup((t_4),"id", env.autoesc), env.autoesc);
-output += "\" data-path=\"";
-output += runtime.suppressValue(runtime.memberLookup((t_4),"path", env.autoesc), env.autoesc);
-output += "\">\n\t\t\t<span class='small'>Path: ";
-output += runtime.suppressValue(runtime.memberLookup((t_4),"path", env.autoesc), env.autoesc);
-output += " </span> \n\t\t\t<p>\n\t\t\t\tTitle: <input name=\"name\" type=\"text\" class=\"field  field--write-in\" value=\"";
-output += runtime.suppressValue(runtime.memberLookup((t_4),"name", env.autoesc), env.autoesc);
-output += "\">\n\t\t\t</p>\n\t\t\t<textarea class='field__textarea' name=\"description\">";
-output += runtime.suppressValue(runtime.memberLookup((t_4),"description", env.autoesc), env.autoesc);
-output += "</textarea>\n\t\t</form>\t\n\t\t";
-;
+output += "\n            ";
+env.getTemplate("sequence.j2", function(t_7,t_5) {
+if(t_7) { cb(t_7); return; }
+t_5.render(context.getVariables(), frame.push(), function(t_8,t_6) {
+if(t_8) { cb(t_8); return; }
+output += t_6
+output += "\n\t\t";
+})});
 }
 }
 frame = frame.pop();
 output += "\n\t</div>\n</div>\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["sequence.j2"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<fieldset class=\"field__item\" data-item=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"id", env.autoesc), env.autoesc);
+output += "\" data-path=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"relpath", env.autoesc), env.autoesc);
+output += "\">\n    <span class='small'>Path: ";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"path", env.autoesc), env.autoesc);
+output += " </span>\n    <p>\n        Title: <input name=\"name\" type=\"text\" class=\"field  field--write-in\" value=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"name", env.autoesc), env.autoesc);
+output += "\">\n    </p>\n    <textarea class='field__textarea' name=\"description\">";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "item")),"description", env.autoesc), env.autoesc);
+output += "</textarea>\n</fieldset>";
 cb(null, output);
 ;
 } catch (e) {
@@ -1910,12 +1934,10 @@ root: root
 			}
 		}
 	};
- 
-	if (document.readyState !== "complete") {
-		Site.start();	
-	} else {
-		Site.init();
-	}
+
+
+    Site.start();
+
 	
 })();
 },{"./edit-project.js":2}],2:[function(require,module,exports){
@@ -1968,6 +1990,10 @@ Group.prototype = {
 
         var toggleClass = "control--hide";
 
+        if (!this.sortUp) {
+            return;
+        }
+
         if (this.order === 0) {
             this.sortUp.classList.add(toggleClass);
         } else {
@@ -1994,13 +2020,31 @@ Group.prototype = {
         return this._id;
     },
     saveData: function() {
-        return {
-            "name": this.titleEl.value,
-            "date": this.dateEl.value,
-            "id": +this._id,
-            "order": this.data.order,
-            "blocks": []
+        var title = false;
+        var date = false;
+
+        if (this.titleEl) {
+            title = this.titleEl.value;
         }
+
+        if (this.dateEl) {
+            date = this.dateEl.value;
+        }
+
+        return {
+            "name": title,
+            "date": date,
+            "path": this.el.dataset.path
+//            "order": this.data.order,
+//            "blocks": []
+        }
+    },
+
+    addChild: function(data) {
+        var el = document.createElement("div");
+        el.innerHTML = nunjucks.render("sequence.j2", {item: data});
+        this.itemContainer.appendChild(el.firstElementChild);
+        this.itemContainer.classList.remove("group--empty");
     }
 };
 
@@ -2017,16 +2061,10 @@ module.exports =  {
     upSelector: "[data-sort-up]",
     downSelector: "[data-sort-down]",
     sortSelector: "[data-sort]",
+    submitSelector: "[data-submit]",
     _divs: [],
     _sortables: [],
     _groups: [],
-    groupTemplate: {
-        "name": "Work block title...",
-        "description": "Work block description...",
-        "order": 0,
-        "date": +new Date(),
-        "id": 0
-    },
 	init: function() {
         this.formEl = document.querySelector(this.formSelector);
         // console.log(this.formEl);
@@ -2037,9 +2075,11 @@ module.exports =  {
         this.addGroupBtn = document.querySelector(this.addSelector);
         this.deleteGroupBtn = document.querySelectorAll(this.deleteSelector);
         this.container = document.querySelector(this.containerSelector);
+        this.submitButton = document.querySelector(this.submitSelector);
         this.addGroupBtn.addEventListener("click", this, false);
         this.container.addEventListener("click", this, false);
         this.formEl.addEventListener("submit", this, false);
+        this.submitButton.addEventListener("click", this, false);
 
         this.render(json);
 
@@ -2064,11 +2104,13 @@ module.exports =  {
                     return this.moveGroup("up", e.target.dataset.sortUp);
                 }
 
+                if (typeof(e.target.dataset.submit) !== "undefined") {
+                    this.serialize();
+                    return this.formEl.submit();
+                }
+
                 break;
 
-            case "submit":
-                this.serialize();
-                return true; 
         }
     },
 
@@ -2079,13 +2121,29 @@ module.exports =  {
 
         var ids = [];
 
-        for (var i = 0; i< json.length; i++) {
-            data = json[i];
-            group = new Group(data.id, data);
-            groups.push(group);
-            container.appendChild(group.getEl());
-            ids.push(data.id);
+
+        defaultGroup = new Group(0, {
+            "name": "default",
+            "data": false
+        });
+        groups.push(defaultGroup);
+
+        ids.push(0);
+
+        for (var i = 1; i < json.length; i++) {
+            data = json[i-1];
+            if (data.type == "Springload\\WorkBlock") {
+                group = new Group(i, data);
+                groups.push(group);
+                container.appendChild(group.getEl());
+                ids.push(i);
+            }
+            if (data.type == "Springload\\Sequence") {
+                defaultGroup.addChild(data);
+            }
         }
+
+        container.appendChild(defaultGroup.getEl());
 
         // IDs may not come back in a logical order. Sort 'em out.
         this.setNextId(Math.max.apply(null, ids) + 1);
@@ -2285,28 +2343,31 @@ module.exports =  {
         for (var i = 0; i < len; i++) {
             group = groups[i];
 
-            items = group.querySelectorAll("[data-item]");
+            items = group.el.querySelectorAll("[data-item]");
             itemData = [];
 
             for (var n = 0; n < items.length; n++) {
                 item = items[n];
 
+                var elements = item.elements;
+
                 itemData.push({
-                    "name": item.name.value,
-                    "description": item.description.value,
-                    "group": groupId,
+                    "name": elements.namedItem("name").value,
+                    "description": elements.namedItem("description").value,
                     "id": item.dataset.item,
                     "path": item.dataset.path
                 });
             }
 
             groupData = group.saveData();
-            groupData["blocks"] = itemData;
-
+            groupData["children"] = itemData;
             data.push(groupData);
         }
 
+        console.log(JSON.stringify(data));
+
         this.formElement.value = JSON.stringify(data);
+
     }
 };
 },{}]},{},[1])

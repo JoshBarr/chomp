@@ -1,7 +1,1 @@
-{
-    "name": "Working on the logo",
-    "description": "Some logo options\n",
-    "group": "2",
-    "id": "a3424d12f5ebf07fa7bf67d3a4b00107287a6616",
-    "path": "add-button"
-}
+{"name":"Add\/remove buttons","description":"Tweaking the add\/remove to make them cleverer.\nShould handle newlines in here cleverly too! ","id":"","path":"block-1\/add-button","base_dir":"\/Users\/josh\/Sites\/clients\/www\/clients\/client\/job000-calculator"}

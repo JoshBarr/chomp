@@ -1,5 +1,12 @@
-<h4><a href="{{data.url}}">{{data.name}}</a></h4>
-<p>
-	{{data.path}}
-</p>
+<h4><a href="{{data.relpath}}">{{data.name}}</a></h4>
+
+{% if "description" in data|keys %}
+    <p>
+        {{ data.description|replace({"\n": "</p><p>"})|raw }}
+    </p>
+{% else %}
+    {#<p>#}
+        {#{{data.relpath}}#}
+    {#</p>#}
+{% endif %}
 

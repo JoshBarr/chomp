@@ -21,11 +21,9 @@
 			}
 		}
 	};
- 
-	if (document.readyState !== "complete") {
-		Site.start();	
-	} else {
-		Site.init();
-	}
+
+
+    Site.start();
+
 	
 })();

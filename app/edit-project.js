@@ -47,6 +47,10 @@ Group.prototype = {
 
         var toggleClass = "control--hide";
 
+        if (!this.sortUp) {
+            return;
+        }
+
         if (this.order === 0) {
             this.sortUp.classList.add(toggleClass);
         } else {
@@ -73,13 +77,31 @@ Group.prototype = {
         return this._id;
     },
     saveData: function() {
-        return {
-            "name": this.titleEl.value,
-            "date": this.dateEl.value,
-            "id": +this._id,
-            "order": this.data.order,
-            "blocks": []
+        var title = false;
+        var date = false;
+
+        if (this.titleEl) {
+            title = this.titleEl.value;
         }
+
+        if (this.dateEl) {
+            date = this.dateEl.value;
+        }
+
+        return {
+            "name": title,
+            "date": date,
+            "path": this.el.dataset.path
+//            "order": this.data.order,
+//            "blocks": []
+        }
+    },
+
+    addChild: function(data) {
+        var el = document.createElement("div");
+        el.innerHTML = nunjucks.render("sequence.j2", {item: data});
+        this.itemContainer.appendChild(el.firstElementChild);
+        this.itemContainer.classList.remove("group--empty");
     }
 };
 
@@ -96,16 +118,10 @@ module.exports =  {
     upSelector: "[data-sort-up]",
     downSelector: "[data-sort-down]",
     sortSelector: "[data-sort]",
+    submitSelector: "[data-submit]",
     _divs: [],
     _sortables: [],
     _groups: [],
-    groupTemplate: {
-        "name": "Work block title...",
-        "description": "Work block description...",
-        "order": 0,
-        "date": +new Date(),
-        "id": 0
-    },
 	init: function() {
         this.formEl = document.querySelector(this.formSelector);
         // console.log(this.formEl);
@@ -116,9 +132,11 @@ module.exports =  {
         this.addGroupBtn = document.querySelector(this.addSelector);
         this.deleteGroupBtn = document.querySelectorAll(this.deleteSelector);
         this.container = document.querySelector(this.containerSelector);
+        this.submitButton = document.querySelector(this.submitSelector);
         this.addGroupBtn.addEventListener("click", this, false);
         this.container.addEventListener("click", this, false);
         this.formEl.addEventListener("submit", this, false);
+        this.submitButton.addEventListener("click", this, false);
 
         this.render(json);
 
@@ -143,11 +161,13 @@ module.exports =  {
                     return this.moveGroup("up", e.target.dataset.sortUp);
                 }
 
+                if (typeof(e.target.dataset.submit) !== "undefined") {
+                    this.serialize();
+                    return this.formEl.submit();
+                }
+
                 break;
 
-            case "submit":
-                this.serialize();
-                return true; 
         }
     },
 
@@ -158,13 +178,29 @@ module.exports =  {
 
         var ids = [];
 
-        for (var i = 0; i< json.length; i++) {
-            data = json[i];
-            group = new Group(data.id, data);
-            groups.push(group);
-            container.appendChild(group.getEl());
-            ids.push(data.id);
+
+        defaultGroup = new Group(0, {
+            "name": "default",
+            "data": false
+        });
+        groups.push(defaultGroup);
+
+        ids.push(0);
+
+        for (var i = 1; i < json.length; i++) {
+            data = json[i-1];
+            if (data.type == "Springload\\WorkBlock") {
+                group = new Group(i, data);
+                groups.push(group);
+                container.appendChild(group.getEl());
+                ids.push(i);
+            }
+            if (data.type == "Springload\\Sequence") {
+                defaultGroup.addChild(data);
+            }
         }
+
+        container.appendChild(defaultGroup.getEl());
 
         // IDs may not come back in a logical order. Sort 'em out.
         this.setNextId(Math.max.apply(null, ids) + 1);
@@ -364,27 +400,30 @@ module.exports =  {
         for (var i = 0; i < len; i++) {
             group = groups[i];
 
-            items = group.querySelectorAll("[data-item]");
+            items = group.el.querySelectorAll("[data-item]");
             itemData = [];
 
             for (var n = 0; n < items.length; n++) {
                 item = items[n];
 
+                var elements = item.elements;
+
                 itemData.push({
-                    "name": item.name.value,
-                    "description": item.description.value,
-                    "group": groupId,
+                    "name": elements.namedItem("name").value,
+                    "description": elements.namedItem("description").value,
                     "id": item.dataset.item,
                     "path": item.dataset.path
                 });
             }
 
             groupData = group.saveData();
-            groupData["blocks"] = itemData;
-
+            groupData["children"] = itemData;
             data.push(groupData);
         }
 
+        console.log(JSON.stringify(data));
+
         this.formElement.value = JSON.stringify(data);
+
     }
 };

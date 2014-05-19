@@ -12,12 +12,18 @@ class DirectoryList
         $this->dir = $dir;        
     }
     
-    public function ls($directory = false)
+    public function ls($directory = false, $options = array())
     {
-
         if ($directory == false) {
             $directory = $this->dir;
         }
+
+        $defaults  = array(
+            "ignore_empty" => false,
+            "base_dir" => false
+        );
+
+        $options = array_merge($defaults, $options);
 
         $directories = array();
 
@@ -32,23 +38,31 @@ class DirectoryList
 
             if ($fileInfo->isDot()) continue;
             if (!$fileInfo->isDir()) continue;
-            // if (count(glob("$dir/*")) === 0) continue;
-            if (!preg_match("/^[a-zA-Z0-9_\.\-]*$/", $name )) continue;
 
-            $findJson = glob("$dir/*.json");
-            
-            if (count($findJson) > 0) {
-                $project_data = $this->readFileAsJson($findJson[0]);
-            } 
+            if ($options["ignore_empty"]) {
+                if (!Common::startsWith($name,"block-")) {
+                    if (count(glob("$dir/*.{jpg,png,gif,mp4,json}", GLOB_BRACE)) === 0) {
+                        continue;
+                    }
+                }
+            }
 
-            $directories[] = array(
+            if (!preg_match("/^[a-zA-Z0-9_\.\-]*$/", $name )) {
+                continue;
+            }
+
+            $info = array(
                 "name" => $name,
                 "mtime" => $fileInfo->getMTime(),
                 "ctime" => $fileInfo->getCTime(),
-                "path" => $dir,
-                "data" => $project_data
+                "path" => $dir
             );
 
+            if ($options["base_dir"]) {
+                $info["relpath"] = str_replace($options["base_dir"]."/", "", $dir);
+            }
+
+            $directories[] = $info;
         }
         
         return $directories;

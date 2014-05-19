@@ -343,17 +343,22 @@ $app->match('/edit/{client}/{project}/', function (Request $request, $client="",
 
     $clientObject = new Springload\ClientProjectList($app['config']['clients'], $client);
     $projectObject = new Springload\ClientProject($clientObject, $project);
-
     $data = $projectObject->getData();
 
-//    $blocks = $projectObject->getData();
 
-
-    $form = $app['form.factory']->createBuilder('form', $data)
+    $form = $app['form.factory']->createBuilder('form', array(
+        "name" => $data["name"],
+        "description" => $data["description"],
+        "job_code" => $data["job_code"],
+        "preview_url" => $data["preview_url"],
+        "basecamp_url" => $data["basecamp_url"]
+    ))
         ->add('name')
         ->add('description', 'textarea')
         ->add('job_code')
-        ->add('preview_url', 'text', array('required'=> false))
+        ->add('preview_url', 'text', array(
+            'required'=> false
+        ))
         ->add('basecamp_url')
         ->add('groups', 'hidden', array(
                 'data'   => json_encode($data['blocks'])
@@ -364,13 +369,10 @@ $app->match('/edit/{client}/{project}/', function (Request $request, $client="",
     $form->handleRequest($request);
 
     if ($form->isValid()) {
-        $data = $form->getData();
+         $result = $form->getData();
+         $result['groups'] = json_decode($result["groups"], true);
 
-        $data['groups'] = json_decode($data["groups"]);
-        // print_r($data);
-        // exit();
-
-        $projectObject->saveData($data);
+        $projectObject->saveData($result);
 
         // redirect somewhere
         return $app->redirect('/project/' . $client . "/" . $project);
