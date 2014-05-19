@@ -1,6 +1,6 @@
 {% import "macros.twig" as macros %}
 <!DOCTYPE html>
-<html>
+<html {% if html_class is defined %}class="{{ html_class }}"{% endif %}>
 <head>
 	<title>
 		Client previews | Springload
@@ -14,15 +14,21 @@
 	
 	{% block bar %}
 		{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-		<div class='userbar'>
-			<div class='right'>
+		<div class='project__meta content content--tight'>
+			<p class='right'>
 				<a href="{{ path('logout') }}" class='btn btn-secondary small'>Logout</a>
-			</div>
+			</p>
+
 			{% if is_granted('ROLE_ADMIN') %}
-				<a href="/">Home</a> | 
-				<a href="/admin/users">Manage users</a>
+			<div>
+				
+				<p>
+					<a href="/">Home</a> | 
+					<a href="/admin/users">Manage users</a>
+				</p>
+			</div>
 			{% endif %}
-			
+		
 		</div>
 	{% endif %}
 	{% endblock %}

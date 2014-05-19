@@ -1,1 +1,35 @@
-{"name":"Job name","description":"foo","job_code":"SL000","preview_url":"test","basecamp_url":"test","groups":[{"name":false,"date":false,"path":"","children":[]},{"name":"Working on the headline","date":"2014-05-14","path":"block-1","children":[{"name":"Add\/remove buttons","description":"Tweaking the add\/remove to make them cleverer.\nShould handle newlines in here cleverly too! ","id":"","path":"block-1\/add-button"},{"name":"Homepage","description":"Updates to navigation and banner area.","id":"","path":"block-1\/sequence-1"}]},{"name":"New login","date":"2014-04-29","path":"block-2","children":[{"name":"Test sequence name","description":"This is a description field! woot!","id":"","path":"block-2\/sequence-2"}]}]}
+{
+    "name": "Job name",
+    "description": "Thing we're making for the people.",
+    "job_code": "SL000",
+    "preview_url": "test",
+    "basecamp_url": "test",
+    "groups": [
+        {
+            "name": false,
+            "date": false,
+            "path": "",
+            "children": [
+                {
+                    "name": "user-login",
+                    "description": "",
+                    "id": "",
+                    "path": "user-login"
+                }
+            ]
+        },
+        {
+            "name": "Working on stuff",
+            "date": "2014-05-07",
+            "path": "block-1",
+            "children": [
+                {
+                    "name": "Add/remove buttons",
+                    "description": "Tweaking the add/remove to make them cleverer.\nShould handle newlines in here cleverly too! ",
+                    "id": "",
+                    "path": "block-1/add-button"
+                }
+            ]
+        }
+    ]
+}

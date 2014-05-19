@@ -27,9 +27,25 @@ Group.prototype = {
     render: function(data) {
         data.id = this._id;
         var div = document.createElement('div');
+        
+        var now;
+
+        if (data.date > 0) {
+            now = new Date([data.date]*1000); 
+        } else {
+            now = new Date([data.mtime]*1000);
+        }
+        
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear()+"-"+(month)+"-"+(day);
+
+        data.time = today;
+
         div.innerHTML = nunjucks.render("group.j2", data);
         this.el = div.firstElementChild;
         this.data = data;
+
 
         this.titleEl = this.el.querySelector("[data-group-field='title']");
         this.dateEl = this.el.querySelector("[data-group-field='date']");
@@ -181,14 +197,15 @@ module.exports =  {
 
         defaultGroup = new Group(0, {
             "name": "default",
-            "data": false
+            "date": false
         });
         groups.push(defaultGroup);
 
         ids.push(0);
 
-        for (var i = 1; i < json.length; i++) {
+        for (var i = 1; i < json.length+1; i++) {
             data = json[i-1];
+            console.log(data);
             if (data.type == "Springload\\WorkBlock") {
                 group = new Group(i, data);
                 groups.push(group);

@@ -22,7 +22,18 @@ class ClientProjectList extends DirectoryList
 
 	public function getData() {
 		$data = $this->getJson();
-		$data["projects"] = $this->ls();
+		$data["projects"] = $this->ls(null, array(
+			"order"=>"modified_desc"
+			)
+		);
+
+		$new = array();
+		foreach ($data["projects"] as $project) {
+			$project["data"] = array();
+			$new[] = $project;
+		}
+
+		$data["projects"] = $new;
 		return $data;
 	}
 

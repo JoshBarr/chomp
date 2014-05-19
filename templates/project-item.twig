@@ -1,12 +1,16 @@
-<h4><a href="{{data.relpath}}">{{data.name}}</a></h4>
+<dd>
+	<h4><a href="{{data.relpath}}">{{data.name}}</a></h4>
 
-{% if "description" in data|keys %}
-    <p>
-        {{ data.description|replace({"\n": "</p><p>"})|raw }}
-    </p>
-{% else %}
-    {#<p>#}
-        {#{{data.relpath}}#}
-    {#</p>#}
-{% endif %}
+	{% if "description" in data|keys %}
+	    <p>
+	        {{ data.description|replace({"\n": "</p><p>"})|raw }}
+	    </p>
+	{% else %}
+	    {#<p>#}
+	        {#{{data.relpath}}#}
+	    {#</p>#}
+	{% endif %}
+</dd>
+
+
 

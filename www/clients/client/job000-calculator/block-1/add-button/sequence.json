@@ -1,1 +1,7 @@
-{"name":"Add\/remove buttons","description":"Tweaking the add\/remove to make them cleverer.\nShould handle newlines in here cleverly too! ","id":"","path":"block-1\/add-button","base_dir":"\/Users\/josh\/Sites\/clients\/www\/clients\/client\/job000-calculator"}
+{
+    "name": "Add/remove buttons",
+    "description": "Tweaking the add/remove to make them cleverer.\nShould handle newlines in here cleverly too! ",
+    "id": "",
+    "path": "block-1/add-button",
+    "base_dir": "/server/chomp/www/clients/client/job000-calculator"
+}

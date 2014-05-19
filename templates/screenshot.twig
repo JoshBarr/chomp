@@ -1,9 +1,10 @@
 {% extends "template.twig" %}
 
+{% set html_class = "html--screenshot" %}
 {% block layout %}
 
 {% if image %}
-	<a href="{% if image.next %}{{ image.next.index }}{% else %}../{% endif %}">
+	<a class='screenshot' href="{% if image.next %}{{ image.next.index }}{% else %}../{% endif %}">
 		<img src="/clients/{{ relpath }}/{{ image.name }}">
 	</a>
 {% else %}

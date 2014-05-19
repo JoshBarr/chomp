@@ -1845,7 +1845,7 @@ output += "\n                ";
 output += "\n\n\t\t</div>\n\t\t<div class=\"left\">\n\t\t\t<h3>\n\t\t\t\t<input type=\"text\" class=\"field field--invisible  field--write-in\" value=\"";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "name"), env.autoesc);
 output += "\" data-group-field=\"title\">\n\t\t\t</h3>\n\t\t</div>\n\t</div>\n    <div>\n        Date: <input name=\"date\" value=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "date"), env.autoesc);
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "time"), env.autoesc);
 output += "\" type=\"date\" data-group-field=\"date\">\n    </div>\n    ";
 ;
 }
@@ -1970,9 +1970,25 @@ Group.prototype = {
     render: function(data) {
         data.id = this._id;
         var div = document.createElement('div');
+        
+        var now;
+
+        if (data.date > 0) {
+            now = new Date([data.date]*1000); 
+        } else {
+            now = new Date([data.mtime]*1000);
+        }
+        
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear()+"-"+(month)+"-"+(day);
+
+        data.time = today;
+
         div.innerHTML = nunjucks.render("group.j2", data);
         this.el = div.firstElementChild;
         this.data = data;
+
 
         this.titleEl = this.el.querySelector("[data-group-field='title']");
         this.dateEl = this.el.querySelector("[data-group-field='date']");
@@ -2124,14 +2140,15 @@ module.exports =  {
 
         defaultGroup = new Group(0, {
             "name": "default",
-            "data": false
+            "date": false
         });
         groups.push(defaultGroup);
 
         ids.push(0);
 
-        for (var i = 1; i < json.length; i++) {
+        for (var i = 1; i < json.length+1; i++) {
             data = json[i-1];
+            console.log(data);
             if (data.type == "Springload\\WorkBlock") {
                 group = new Group(i, data);
                 groups.push(group);

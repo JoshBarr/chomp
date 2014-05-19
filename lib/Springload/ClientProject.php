@@ -43,7 +43,8 @@ class ClientProject extends DirectoryList
         $newBlocks = array();
         $blocks = $this->ls(false, array(
             "ignore_empty" => true,
-            "base_dir" => $this->dir
+            "base_dir" => $this->dir,
+            "order" => "modified_desc"
         ));
 
         foreach ($blocks as $block) {
@@ -89,7 +90,7 @@ class ClientProject extends DirectoryList
 
             // Sort blocks by mtime
             if (array_key_exists("children", $b) && array_key_exists("children", $a)) {
-                return $a['ctime'] - $b['ctime'];
+                return $a['mtime'] - $b['mtime'];
             }
 
 

@@ -3,12 +3,7 @@
 {% block content_outer %}
 
 <div class="project__meta content">
-	<h1>{{client.name}}</h1>
-	<p>
-		{{client.url}}
-	</p>
-
-	<img src="{{client.logo}}">
+	
 
 
 	{% if is_granted('ROLE_ADMIN') %}
@@ -18,6 +13,20 @@
 	{% endif %}
 </div>
 <div class="content">
+	<div class="clearfix client__header">
+		<div class="right">
+			<img src="{{client.logo}}">
+		</div>
+		<div>
+			<h1>{{client.name}}</h1>
+			<p>
+				{{client.url}}
+			</p>
+		</div>
+	</div>
+	
+
+	
 	{% if client.projects|length == 0 %} 
 	<p>
 		No projects

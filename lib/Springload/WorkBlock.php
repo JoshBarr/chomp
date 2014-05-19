@@ -50,6 +50,7 @@ class WorkBlock extends JsonModel {
     }
 
     public function toArray() {
+        date_default_timezone_set("Pacific/Auckland");
         $array = $this->data;
         $array["children"] = $this->getChildren();
         $array["url"] = $this->data['name'];
@@ -61,7 +62,7 @@ class WorkBlock extends JsonModel {
 
         if ($jason) {
             $array["name"] = $jason["name"];
-            $array["date"] = $jason["date"];
+            $array["date"] = strtotime($jason["date"]);
         }
 
         return $array;

@@ -20,7 +20,8 @@ class DirectoryList
 
         $defaults  = array(
             "ignore_empty" => false,
-            "base_dir" => false
+            "base_dir" => false,
+            "order" => false
         );
 
         $options = array_merge($defaults, $options);
@@ -64,8 +65,32 @@ class DirectoryList
 
             $directories[] = $info;
         }
+
+        if ($options["order"]) {
+
+            if ($options["order"] == "modified_desc") {
+                // Put them in mtime order first...
+                usort($directories, function ($a, $b) {
+                    return ($a['mtime'] - $b['mtime']);
+                });
+                // Then reverse...
+                $directories = array_reverse($directories); 
+            }
+
+            if ($options["order"] == "modified_asc") {
+                usort($directories, function ($a, $b) {
+                    return ($a['mtime'] - $b['mtime']);
+                });
+            }
+
+            if ($options["order"] == "alpha") {
+                // return $directories;
+            }
+
+        }
         
         return $directories;
+        
     }
 
     public function getJsonFilename() {
